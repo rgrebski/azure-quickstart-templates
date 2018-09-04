@@ -229,7 +229,10 @@
         "offer": "UbuntuServer",
         "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
-      }
+      },
+      "scripts": [
+        "[variables('environment').configPrimaryNodeScript]"
+      ]
     },
     "configSecondaryOsSettings": {
       "imageReference": {
@@ -237,7 +240,10 @@
         "offer": "UbuntuServer",
         "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
-      }
+      },
+      "scripts": [
+        "[variables('environment').configSecondaryNodeScript]"
+      ]
     },
     "router1OsSettings": {
       "imageReference": {
@@ -374,8 +380,8 @@
             "value": "[variables('namespace')]"
           },
           "vmbasename": {
-            "value": "[concat('configSecondary', '2')]"
           },
+          "value": "[concat('configSecondary', '2')]"
           "subnet": {
             "value": "[variables('networkSettings').subnet.dse]"
           },
@@ -397,8 +403,8 @@
     {
       "name": "configPrimaryNode",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
       "dependsOn": [
+        "apiVersion": "2015-01-01",
         "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'configSecondaryNode2')]"
       ],
