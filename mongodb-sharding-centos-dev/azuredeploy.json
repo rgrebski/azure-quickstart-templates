@@ -32,19 +32,14 @@
         "description": "DNS Name for the publicly accessible router nodes. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
       }
     },
-    "centOsVersion": {
+    "ubuntuOSVersion": {
       "type": "string",
-      "defaultValue": "7.2",
+      "defaultValue": "16.04.0-LTS",
       "allowedValues": [
-        "6.5",
-        "6.6",
-        "6.7",
-        "7.0",
-        "7.1",
-        "7.2"
+        "16.04.0-LTS"
       ],
       "metadata": {
-        "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version."
+        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
       }
     },
     "environment": {
@@ -86,14 +81,14 @@
       "type": "int",
       "minValue": 1,
       "maxValue": 1023,
-      "defaultValue": 20,
+      "defaultValue": 30,
       "metadata": {
         "description": "The size of each data disk, the value is between 1 and 1023."
       }
     },
     "routerNodeVmSize": {
       "type": "string",
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_DS1_v2",
       "allowedValues": [
         "Standard_A2",
         "Standard_A3",
@@ -104,6 +99,7 @@
         "Standard_D2",
         "Standard_D3",
         "Standard_D4",
+        "Standard_DS1_v2",
         "Standard_D2_v2",
         "Standard_D3_v2",
         "Standard_D4_v2",
@@ -117,7 +113,7 @@
     },
     "configNodeVmSize": {
       "type": "string",
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_DS1_v2",
       "allowedValues": [
         "Standard_A2",
         "Standard_A3",
@@ -128,6 +124,7 @@
         "Standard_D2",
         "Standard_D3",
         "Standard_D4",
+        "Standard_DS1_v2",
         "Standard_D2_v2",
         "Standard_D3_v2",
         "Standard_D4_v2",
@@ -139,9 +136,9 @@
         "description": "The size of the virtual machines used when provisioning config nodes"
       }
     },
-    "replicaNodeVmSize": {
+    "shardNodeVmSize": {
       "type": "string",
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_DS1_v2",
       "allowedValues": [
         "Standard_A2",
         "Standard_A3",
@@ -152,6 +149,7 @@
         "Standard_D2",
         "Standard_D3",
         "Standard_D4",
+        "Standard_DS1_v2",
         "Standard_D2_v2",
         "Standard_D3_v2",
         "Standard_D4_v2",
@@ -179,8 +177,7 @@
     }
   },
   "variables": {
-    "baseUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mongodb-sharding-centos/",
-    "baseChinaUrl": "http://msmirrors.blob.core.chinacloudapi.cn/mongodb/mongodb-sharding-centos/",
+    "baseUrl": "https://github.com/rgrebski/azure-quickstart-templates/tree/master/mongodb-sharding-centos-dev",
     "environmentAzureCloud": {
       "serviceEndPoint": "core.windows.net",
       "templateBaseUrl": "[concat(variables('baseUrl'), 'nested/')]",
@@ -190,16 +187,6 @@
       "router2NodeScript": "[concat(variables('baseUrl'), 'scripts/router2.sh')]",
       "replicaPrimaryNodeScript": "[concat(variables('baseUrl'), 'scripts/replica_primary.sh')]",
       "replicaSecondaryNodeScript": "[concat(variables('baseUrl'), 'scripts/replica_secondary.sh')]"
-    },
-    "environmentAzureChinaCloud": {
-      "serviceEndPoint": "core.chinacloudapi.cn",
-      "templateBaseUrl": "[concat(variables('baseChinaUrl'), 'nested/')]",
-      "configPrimaryNodeScript": "[concat(variables('baseChinaUrl'), 'scripts/config_primary.sh')]",
-      "configSecondaryNodeScript": "[concat(variables('baseChinaUrl'), 'scripts/config_secondary.sh')]",
-      "router1NodeScript": "[concat(variables('baseChinaUrl'), 'scripts/router1.sh')]",
-      "router2NodeScript": "[concat(variables('baseChinaUrl'), 'scripts/router2.sh')]",
-      "replicaPrimaryNodeScript": "[concat(variables('baseChinaUrl'), 'scripts/replica_primary.sh')]",
-      "replicaSecondaryNodeScript": "[concat(variables('baseChinaUrl'), 'scripts/replica_secondary.sh')]"
     },
     "environment": "[variables(concat('environment', parameters('environment')))]",
     "templateBaseUrl": "[variables('environment').templateBaseUrl]",
@@ -228,9 +215,9 @@
           "base": "10.0.0.",
           "start": 5
         },
-        "configPrimaryIp": "10.0.0.240",
-        "configSecondaryIp1": "10.0.0.241",
-        "configSecondaryIp2": "10.0.0.242",
+        "configPrimaryAndShard1Ip": "10.0.0.240",
+        "configSecondary1AndShard2Ip": "10.0.0.241",
+        "configSecondary2AndShard3Ip": "10.0.0.242",
         "routerIp1": "10.0.0.230",
         "routerIp2": "10.0.0.231",
         "replicaPrimaryIp1": "10.0.0.100",
@@ -240,30 +227,24 @@
     "configPrimaryOsSettings": {
       "imageReference": {
         "publisher": "OpenLogic",
-        "offer": "CentOS",
-        "sku": "[parameters('centOsVersion')]",
+        "offer": "UbuntuServer",
+        "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
-      },
-      "scripts": [
-        "[variables('environment').configPrimaryNodeScript]"
-      ]
+      }
     },
     "configSecondaryOsSettings": {
       "imageReference": {
         "publisher": "OpenLogic",
-        "offer": "CentOS",
-        "sku": "[parameters('centOsVersion')]",
+        "offer": "UbuntuServer",
+        "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
-      },
-      "scripts": [
-        "[variables('environment').configSecondaryNodeScript]"
-      ]
+      }
     },
     "router1OsSettings": {
       "imageReference": {
         "publisher": "OpenLogic",
-        "offer": "CentOS",
-        "sku": "[parameters('centOsVersion')]",
+        "offer": "UbuntuServer",
+        "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
       },
       "scripts": [
@@ -273,8 +254,8 @@
     "router2OsSettings": {
       "imageReference": {
         "publisher": "OpenLogic",
-        "offer": "CentOS",
-        "sku": "[parameters('centOsVersion')]",
+        "offer": "UbuntuServer",
+        "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
       },
       "scripts": [
@@ -284,8 +265,8 @@
     "replicaPrimaryOsSettings": {
       "imageReference": {
         "publisher": "OpenLogic",
-        "offer": "CentOS",
-        "sku": "[parameters('centOsVersion')]",
+        "offer": "UbuntuServer",
+        "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
       },
       "scripts": [
@@ -295,8 +276,8 @@
     "replicaSecondaryOsSettings": {
       "imageReference": {
         "publisher": "OpenLogic",
-        "offer": "CentOS",
-        "sku": "[parameters('centOsVersion')]",
+        "offer": "UbuntuServer",
+        "sku": "[parameters('ubuntuOSVersion')]",
         "version": "latest"
       },
       "scripts": [
@@ -358,7 +339,7 @@
             "value": "[parameters('configNodeVmSize')]"
           },
           "staticIp": {
-            "value": "[variables('networkSettings').statics.configSecondaryIp1]"
+            "value": "[variables('networkSettings').statics.configSecondary1AndShard2Ip]"
           },
           "zabbixServerIPAddress": {
             "value": "[parameters('zabbixServerIPAddress')]"
@@ -403,7 +384,7 @@
             "value": "[parameters('configNodeVmSize')]"
           },
           "staticIp": {
-            "value": "[variables('networkSettings').statics.configSecondaryIp2]"
+            "value": "[variables('networkSettings').statics.configSecondary2AndShard3Ip]"
           },
           "zabbixServerIPAddress": {
             "value": "[parameters('zabbixServerIPAddress')]"
@@ -451,7 +432,7 @@
             "value": "[variables('networkSettings').subnet.dse]"
           },
           "staticIp": {
-            "value": "[variables('networkSettings').statics.configPrimaryIp]"
+            "value": "[variables('networkSettings').statics.configPrimaryAndShard1Ip]"
           },
           "vmSize": {
             "value": "[parameters('configNodeVmSize')]"
@@ -461,468 +442,6 @@
           },
           "osSettings": {
             "value": "[variables('configPrimaryOsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "[concat('aReplicaSecondaryNode', '0')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('replicaSecondaryTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "replSetName": {
-            "value": "repset1"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "[concat('aReplicaSecondary', '0')]"
-          },
-          "storageAccountBasename": {
-            "value": "[concat('aresecond', '0')]"
-          },
-          "sizeOfDataDiskInGB": {
-            "value": "[parameters('sizeOfDataDiskInGB')]"
-          },
-          "numDataDisks": {
-            "value": "[parameters('numDataDisks')]"
-          },
-          "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('replicaNodeVmSize')]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('replicaSecondaryOsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "[concat('aReplicaSecondaryNode', '1')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'aReplicaSecondaryNode0')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('replicaSecondaryTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "replSetName": {
-            "value": "repset1"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "[concat('aReplicaSecondary', '1')]"
-          },
-          "storageAccountBasename": {
-            "value": "[concat('aresecond', '1')]"
-          },
-          "sizeOfDataDiskInGB": {
-            "value": "[parameters('sizeOfDataDiskInGB')]"
-          },
-          "numDataDisks": {
-            "value": "[parameters('numDataDisks')]"
-          },
-          "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('replicaNodeVmSize')]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('replicaSecondaryOsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "aReplicaPrimaryNode",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'aReplicaSecondaryNode1')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('replicaPrimaryTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "mongoAdminUsername": {
-            "value": "[parameters('mongoAdminUsername')]"
-          },
-          "mongoAdminPassword": {
-            "value": "[parameters('mongoAdminPassword')]"
-          },
-          "replSetName": {
-            "value": "repset1"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "aReplicaPrimary"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('replicaNodeVmSize')]"
-          },
-          "storageAccountBasename": {
-            "value": "areprimary"
-          },
-          "sizeOfDataDiskInGB": {
-            "value": "[parameters('sizeOfDataDiskInGB')]"
-          },
-          "numDataDisks": {
-            "value": "[parameters('numDataDisks')]"
-          },
-          "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
-          },
-          "staticIp": {
-            "value": "[variables('networkSettings').statics.replicaPrimaryIp1]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('replicaPrimaryOsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "[concat('bReplicaSecondaryNode', '0')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'aReplicaPrimaryNode')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('replicaSecondaryTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "replSetName": {
-            "value": "repset2"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "[concat('bReplicaSecondary', '0')]"
-          },
-          "storageAccountBasename": {
-            "value": "[concat('bresecond', '0')]"
-          },
-          "sizeOfDataDiskInGB": {
-            "value": "[parameters('sizeOfDataDiskInGB')]"
-          },
-          "numDataDisks": {
-            "value": "[parameters('numDataDisks')]"
-          },
-          "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('replicaNodeVmSize')]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('replicaSecondaryOsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "[concat('bReplicaSecondaryNode', '1')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'bReplicaSecondaryNode0')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('replicaSecondaryTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "replSetName": {
-            "value": "repset2"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "[concat('bReplicaSecondary', '1')]"
-          },
-          "storageAccountBasename": {
-            "value": "[concat('bresecond', '1')]"
-          },
-          "sizeOfDataDiskInGB": {
-            "value": "[parameters('sizeOfDataDiskInGB')]"
-          },
-          "numDataDisks": {
-            "value": "[parameters('numDataDisks')]"
-          },
-          "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('replicaNodeVmSize')]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('replicaSecondaryOsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "bReplicaPrimaryNode",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'bReplicaSecondaryNode1')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('replicaPrimaryTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "mongoAdminUsername": {
-            "value": "[parameters('mongoAdminUsername')]"
-          },
-          "mongoAdminPassword": {
-            "value": "[parameters('mongoAdminPassword')]"
-          },
-          "replSetName": {
-            "value": "repset2"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "bReplicaPrimary"
-          },
-          "storageAccountBasename": {
-            "value": "breprimary"
-          },
-          "sizeOfDataDiskInGB": {
-            "value": "[parameters('sizeOfDataDiskInGB')]"
-          },
-          "numDataDisks": {
-            "value": "[parameters('numDataDisks')]"
-          },
-          "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('replicaNodeVmSize')]"
-          },
-          "staticIp": {
-            "value": "[variables('networkSettings').statics.replicaPrimaryIp2]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('replicaPrimaryOsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "routerNode1",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'configPrimaryNode')]",
-        "[concat('Microsoft.Resources/deployments/', 'bReplicaPrimaryNode')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('router1TemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "mongoAdminUsername": {
-            "value": "[parameters('mongoAdminUsername')]"
-          },
-          "mongoAdminPassword": {
-            "value": "[parameters('mongoAdminPassword')]"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "router1"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('routerNodeVmSize')]"
-          },
-          "dnsname": {
-            "value": "[parameters('dnsNamePrefix')]"
-          },
-          "staticIp": {
-            "value": "[variables('networkSettings').statics.routerIp1]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('router1OsSettings')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "routerNode2",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'routerNode1')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('router2TemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "namespace": {
-            "value": "[variables('namespace')]"
-          },
-          "vmbasename": {
-            "value": "router2"
-          },
-          "subnet": {
-            "value": "[variables('networkSettings').subnet.dse]"
-          },
-          "vmSize": {
-            "value": "[parameters('routerNodeVmSize')]"
-          },
-          "dnsname": {
-            "value": "[parameters('dnsNamePrefix')]"
-          },
-          "staticIp": {
-            "value": "[variables('networkSettings').statics.routerIp2]"
-          },
-          "zabbixServerIPAddress": {
-            "value": "[parameters('zabbixServerIPAddress')]"
-          },
-          "osSettings": {
-            "value": "[variables('router2OsSettings')]"
           }
         }
       }
