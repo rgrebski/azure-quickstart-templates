@@ -176,7 +176,7 @@
     }
   },
   "variables": {
-    "baseUrl": "https://github.com/rgrebski/azure-quickstart-templates/tree/master/mongodb-sharding-centos-dev",
+    "baseUrl": "https://raw.githubusercontent.com/rgrebski/azure-quickstart-templates/tree/master/mongodb-sharding-centos-dev/",
     "environmentAzureCloud": {
       "serviceEndPoint": "core.windows.net",
       "templateBaseUrl": "[concat(variables('baseUrl'), 'nested/')]",
