@@ -38,7 +38,7 @@ systemLog:
 
 # network interfaces
 net:
-  port: 27018
+  port: 27019
   bindIp: 0.0.0.0
 
 # how the process runs
@@ -116,7 +116,7 @@ systemLog:
 
 # network interfaces
 net:
-  port: 27017
+  port: 27018
   bindIp: 0.0.0.0
 
 # how the process runs
