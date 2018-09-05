@@ -117,11 +117,17 @@
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(parameters('namespace'), concat(parameters('vmbasename'), 'nic'))]",
       "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('namespace'), parameters('vmbasename'), 'PublicIp')]"
+      ],
       "properties": {
         "ipConfigurations": [
           {
             "name": "ipconfig1",
             "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('namespace'), parameters('vmbasename'), 'PublicIp'))]"
+              },
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[parameters('staticIp')]",
               "subnet": {
