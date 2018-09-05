@@ -344,7 +344,7 @@
             "value": "[parameters('configNodeVmSize')]"
           },
           "dnsname": {
-            "value": "[parameters('dnsNamePrefix')]"
+            "value": "[concat(parameters('dnsNamePrefix'), '-config1')]"
           },
           "staticIp": {
             "value": "[variables('networkSettings').statics.configSecondary1AndShard2Ip]"
@@ -392,7 +392,7 @@
             "value": "[parameters('configNodeVmSize')]"
           },
           "dnsname": {
-            "value": "[parameters('dnsNamePrefix')]"
+            "value": "[concat(parameters('dnsNamePrefix'), '-config2')]"
           },
           "staticIp": {
             "value": "[variables('networkSettings').statics.configSecondary2AndShard3Ip]"
