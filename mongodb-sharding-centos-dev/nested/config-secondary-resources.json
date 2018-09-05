@@ -20,6 +20,9 @@
     "vmSize": {
       "type": "string"
     },
+    "dnsname": {
+      "type": "string"
+    },
     "zabbixServerIPAddress": {
       "type": "string"
     },
