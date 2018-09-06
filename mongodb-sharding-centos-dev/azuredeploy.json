@@ -565,7 +565,7 @@
     {
       "name": "shard7",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-01-01",
+      "apiVersion": "2015-01-01",
       "dependsOn": [
         "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'shard7')]"
@@ -610,7 +610,7 @@
     {
       "name": "shard8",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2018-01-01",
+      "apiVersion": "2015-01-01",
       "dependsOn": [
         "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'shard8')]"
