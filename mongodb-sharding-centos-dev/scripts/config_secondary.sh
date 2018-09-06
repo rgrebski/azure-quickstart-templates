@@ -140,7 +140,7 @@ Documentation=https://docs.mongodb.org/manual
 User=mongodb
 Group=mongodb
 ExecStart=/usr/bin/mongod --config /etc/mongod_shardsvr.conf
-PIDFile=/var/run/mongodb/mongod.confsvr.pid
+PIDFile=/var/run/mongodb/mongod.shardsvr.pid
 # file size
 LimitFSIZE=infinity
 # cpu time

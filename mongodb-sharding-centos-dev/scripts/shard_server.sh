@@ -63,7 +63,7 @@ Documentation=https://docs.mongodb.org/manual
 User=mongodb
 Group=mongodb
 ExecStart=/usr/bin/mongod --config /etc/mongod_shardsvr.conf
-PIDFile=/var/run/mongodb/mongod.confsvr.pid
+PIDFile=/var/run/mongodb/mongod.shardsvr.pid
 # file size
 LimitFSIZE=infinity
 # cpu time
@@ -89,7 +89,6 @@ EOT
 
 # --------- SHARD SERVER CONFIG + SERVICE [END] -------------
 
-    chmod 644 /lib/systemd/system/mongod.confsvr.service
     chmod 644 /lib/systemd/system/mongod.shardsvr.service
 
     mkdir /var/lib/mongodb/shardsvr
@@ -100,7 +99,6 @@ EOT
     rm /lib/systemd/system/mongod.service
 
     #enable autostart
-    systemctl enable mongod.confsvr.service
     systemctl enable mongod.shardsvr.service
 #------------------------------------------------------
 
@@ -120,8 +118,6 @@ EOT
 
 install_mongo3
 
-    #start config replica set
-    systemctl start mongod.confsvr.service
     #start shard as standalone server
     systemctl start mongod.shardsvr.service
 
