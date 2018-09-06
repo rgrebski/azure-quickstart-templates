@@ -1,5 +1,6 @@
 #!/bin/bash
-
+mongoAdminUser=$1
+mongoAdminPasswd=$2
 mongoKeyFile='E6JhxBwAXSwhNaz2'
 
 install_mongo3() {
