@@ -183,7 +183,7 @@
       "configPrimaryNodeScript": "[concat(variables('baseUrl'), 'scripts/config_primary.sh')]",
       "configSecondaryNodeScript": "[concat(variables('baseUrl'), 'scripts/config_secondary.sh')]",
       "routerNodeScript": "[concat(variables('baseUrl'), 'scripts/router.sh')]",
-      "shardServerNodeScript": "[concat(variables('baseUrl'), 'scripts/shard_server.sh')]",
+      "shardServerNodeScript": "[concat(variables('baseUrl'), 'scripts/shard_server.sh')]"
     },
     "environment": "[variables(concat('environment', parameters('environment')))]",
     "templateBaseUrl": "[variables('environment').templateBaseUrl]",
@@ -432,8 +432,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'shard4')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -447,6 +446,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
           },
           "namespace": {
             "value": "[variables('namespace')]"
@@ -477,8 +482,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'shard5')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -492,6 +496,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
           },
           "namespace": {
             "value": "[variables('namespace')]"
@@ -522,8 +532,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'shard6')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -537,6 +546,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
           },
           "namespace": {
             "value": "[variables('namespace')]"
@@ -567,8 +582,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'shard7')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -582,6 +596,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
           },
           "namespace": {
             "value": "[variables('namespace')]"
@@ -612,8 +632,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'shard8')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -627,6 +646,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
           },
           "namespace": {
             "value": "[variables('namespace')]"
@@ -658,7 +683,13 @@
       "apiVersion": "2015-01-01",
       "dependsOn": [
         "[concat('Microsoft.Resources/deployments/', 'shared')]",
-        "[concat('Microsoft.Resources/deployments/', 'routerNode')]"
+        "[concat('Microsoft.Resources/deployments/', 'configSecondaryNode1')]",
+        "[concat('Microsoft.Resources/deployments/', 'configSecondaryNode2')]",
+        "[concat('Microsoft.Resources/deployments/', 'configPrimaryNode')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard4')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard5')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard6')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard7')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -672,6 +703,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
           },
           "namespace": {
             "value": "[variables('namespace')]"
