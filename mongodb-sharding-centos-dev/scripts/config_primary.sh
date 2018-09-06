@@ -2,7 +2,7 @@
 
 mongoAdminUser=$1
 mongoAdminPasswd=$2
-mongoKeyFile='2Rr_Czkjm.!N)cuA'
+mongoKeyFile='E6JhxBwAXSwhNaz2'
 
 install_mongo3() {
     #install mongo3
