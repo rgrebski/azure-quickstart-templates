@@ -2,13 +2,16 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "replSetName": {
-      "type": "string"
-    },
     "adminUsername": {
       "type": "string"
     },
     "adminPassword": {
+      "type": "securestring"
+    },
+    "mongoAdminUsername": {
+      "type": "string"
+    },
+    "mongoAdminPassword": {
       "type": "securestring"
     },
     "namespace": {
@@ -17,20 +20,8 @@
     "vmbasename": {
       "type": "string"
     },
-    "storageAccountBasename": {
-      "type": "string"
-    },
     "osSettings": {
       "type": "object"
-    },
-    "numDataDisks": {
-      "type": "string"
-    },
-    "sizeOfDataDiskInGB": {
-      "type": "int"
-    },
-    "templateBaseUrl": {
-      "type": "string"
     },
     "vmSize": {
       "type": "string"
@@ -40,6 +31,9 @@
     },
     "subnet": {
       "type": "object"
+    },
+    "staticIp": {
+      "type": "string"
     },
     "location": {
       "type": "string",
@@ -51,45 +45,10 @@
   },
   "variables": {
     "subnetRef": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('subnet').vnet), '/subnets/', parameters('subnet').name)]",
-    "storageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('storageAccountBasename'))]",
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'standardsa')]",
     "securityGroupName": "[concat(parameters('namespace'), parameters('vmbasename'), 'nsg')]"
   },
   "resources": [
-    {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "accountType": "Standard_LRS"
-      }
-    },
-    {
-      "apiVersion": "2015-01-01",
-      "name": "diskSelection",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templateBaseUrl'), 'disksSelector', '.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "numDataDisks": {
-            "value": "[parameters('numDataDisks')]"
-          },
-          "diskStorageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
-          "diskCaching": {
-            "value": "ReadWrite"
-          },
-          "diskSizeGB": {
-            "value": "[parameters('sizeOfDataDiskInGB')]"
-          }
-        }
-      }
-    },
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
@@ -117,7 +76,7 @@
               "description": "Allows MongoDB traffic",
               "protocol": "Tcp",
               "sourcePortRange": "*",
-              "destinationPortRange": "27017",
+              "destinationPortRange": "27018",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
@@ -166,7 +125,8 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('staticIp')]",
               "subnet": {
                 "id": "[variables('subnetRef')]"
               },
@@ -184,9 +144,7 @@
       "name": "[concat(parameters('namespace'), concat(parameters('vmbasename'), 'vm'))]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('namespace'), parameters('vmbasename'), 'nic')]",
-        "[concat('Microsoft.Resources/deployments/', 'diskSelection')]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('namespace'), parameters('vmbasename'), 'nic')]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -206,8 +164,7 @@
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          },
-          "dataDisks": "[reference('diskSelection').outputs.dataDiskArray.value]"
+          }
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -220,7 +177,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('namespace'), parameters('vmbasename'), 'vm', '/replicaSecondaryInstall')]",
+      "name": "[concat(parameters('namespace'), parameters('vmbasename'), 'vm', '/configShardInstall')]",
       "apiVersion": "2015-06-15",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -236,7 +193,7 @@
           "fileUris": "[parameters('osSettings').scripts]"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('bash replica_secondary.sh ', parameters('replSetName'), ' ', parameters('zabbixServerIPAddress'))]"
+          "commandToExecute": "[concat('bash shard_server.sh ', parameters('mongoAdminUsername'), ' ', parameters('mongoAdminPassword'), ' ', parameters('zabbixServerIPAddress'))]"
         }
       }
     }

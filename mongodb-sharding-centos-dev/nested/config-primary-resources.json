@@ -76,7 +76,7 @@
               "description": "Allows MongoDB traffic",
               "protocol": "Tcp",
               "sourcePortRange": "*",
-              "destinationPortRange": "27019",
+              "destinationPortRange": "27018-27019",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",

@@ -182,20 +182,16 @@
       "templateBaseUrl": "[concat(variables('baseUrl'), 'nested/')]",
       "configPrimaryNodeScript": "[concat(variables('baseUrl'), 'scripts/config_primary.sh')]",
       "configSecondaryNodeScript": "[concat(variables('baseUrl'), 'scripts/config_secondary.sh')]",
-      "router1NodeScript": "[concat(variables('baseUrl'), 'scripts/router1.sh')]",
-      "router2NodeScript": "[concat(variables('baseUrl'), 'scripts/router2.sh')]",
-      "replicaPrimaryNodeScript": "[concat(variables('baseUrl'), 'scripts/replica_primary.sh')]",
-      "replicaSecondaryNodeScript": "[concat(variables('baseUrl'), 'scripts/replica_secondary.sh')]"
+      "routerNodeScript": "[concat(variables('baseUrl'), 'scripts/router.sh')]",
+      "shardServerNodeScript": "[concat(variables('baseUrl'), 'scripts/shard_server.sh')]",
     },
     "environment": "[variables(concat('environment', parameters('environment')))]",
     "templateBaseUrl": "[variables('environment').templateBaseUrl]",
     "sharedTemplateUrl": "[concat(variables('templateBaseUrl'), 'shared-resources.json')]",
     "configPrimaryTemplateUrl": "[concat(variables('templateBaseUrl'), 'config-primary-resources.json')]",
     "configSecondaryTemplateUrl": "[concat(variables('templateBaseUrl'), 'config-secondary-resources.json')]",
-    "router1TemplateUrl": "[concat(variables('templateBaseUrl'), 'router1-resources.json')]",
-    "router2TemplateUrl": "[concat(variables('templateBaseUrl'), 'router2-resources.json')]",
-    "replicaPrimaryTemplateUrl": "[concat(variables('templateBaseUrl'), 'replica-primary-resources.json')]",
-    "replicaSecondaryTemplateUrl": "[concat(variables('templateBaseUrl'), 'replica-secondary-resources.json')]",
+    "shardServerTemplateUrl": "[concat(variables('templateBaseUrl'), 'shardServer-resources.json')]",
+    "routerTemplateUrl": "[concat(variables('templateBaseUrl'), 'router-resources.json')]",
     "namespace": "mongodb-",
     "virtualNetworkName": "myVNET",
     "apiVersion": "2015-01-01",
@@ -214,13 +210,15 @@
           "base": "10.0.0.",
           "start": 5
         },
+        "routerIp": "10.0.0.230",
         "configPrimaryAndShard1Ip": "10.0.0.240",
         "configSecondary1AndShard2Ip": "10.0.0.241",
         "configSecondary2AndShard3Ip": "10.0.0.242",
-        "routerIp1": "10.0.0.230",
-        "routerIp2": "10.0.0.231",
-        "replicaPrimaryIp1": "10.0.0.100",
-        "replicaPrimaryIp2": "10.0.0.110"
+        "shard4Ip": "10.0.0.243",
+        "shard5Ip": "10.0.0.244",
+        "shard6Ip": "10.0.0.245",
+        "shard7Ip": "10.0.0.246",
+        "shard8Ip": "10.0.0.247"
       }
     },
     "configPrimaryOsSettings": {
@@ -245,7 +243,7 @@
         "[variables('environment').configSecondaryNodeScript]"
       ]
     },
-    "router1OsSettings": {
+    "shardOsSettings": {
       "imageReference": {
         "publisher": "Canonical",
         "offer": "UbuntuServer",
@@ -253,10 +251,10 @@
         "version": "latest"
       },
       "scripts": [
-        "[variables('environment').router1NodeScript]"
+        "[variables('environment').shardServerNodeScript]"
       ]
     },
-    "router2OsSettings": {
+    "routerOsSettings": {
       "imageReference": {
         "publisher": "Canonical",
         "offer": "UbuntuServer",
@@ -264,29 +262,7 @@
         "version": "latest"
       },
       "scripts": [
-        "[variables('environment').router2NodeScript]"
-      ]
-    },
-    "replicaPrimaryOsSettings": {
-      "imageReference": {
-        "publisher": "Canonical",
-        "offer": "UbuntuServer",
-        "sku": "[parameters('ubuntuOSVersion')]",
-        "version": "latest"
-      },
-      "scripts": [
-        "[variables('environment').replicaPrimaryNodeScript]"
-      ]
-    },
-    "replicaSecondaryOsSettings": {
-      "imageReference": {
-        "publisher": "Canonical",
-        "offer": "UbuntuServer",
-        "sku": "[parameters('ubuntuOSVersion')]",
-        "version": "latest"
-      },
-      "scripts": [
-        "[variables('environment').replicaSecondaryNodeScript]"
+        "[variables('environment').routerNodeScript]"
       ]
     }
   },
@@ -343,9 +319,6 @@
           "vmSize": {
             "value": "[parameters('configNodeVmSize')]"
           },
-          "dnsname": {
-            "value": "[concat(parameters('dnsNamePrefix'), '-config1')]"
-          },
           "staticIp": {
             "value": "[variables('networkSettings').statics.configSecondary1AndShard2Ip]"
           },
@@ -390,9 +363,6 @@
           },
           "vmSize": {
             "value": "[parameters('configNodeVmSize')]"
-          },
-          "dnsname": {
-            "value": "[concat(parameters('dnsNamePrefix'), '-config2')]"
           },
           "staticIp": {
             "value": "[variables('networkSettings').statics.configSecondary2AndShard3Ip]"
@@ -453,6 +423,279 @@
           },
           "osSettings": {
             "value": "[variables('configPrimaryOsSettings')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "shard4",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard4')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('shardServerTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "namespace": {
+            "value": "[variables('namespace')]"
+          },
+          "vmbasename": {
+            "value": "[concat('shard', '4')]"
+          },
+          "subnet": {
+            "value": "[variables('networkSettings').subnet.dse]"
+          },
+          "vmSize": {
+            "value": "[parameters('configNodeVmSize')]"
+          },
+          "staticIp": {
+            "value": "[variables('networkSettings').statics.shard4Ip]"
+          },
+          "zabbixServerIPAddress": {
+            "value": "[parameters('zabbixServerIPAddress')]"
+          },
+          "osSettings": {
+            "value": "[variables('shardOsSettings')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "shard5",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard5')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('shardServerTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "namespace": {
+            "value": "[variables('namespace')]"
+          },
+          "vmbasename": {
+            "value": "[concat('shard', '5')]"
+          },
+          "subnet": {
+            "value": "[variables('networkSettings').subnet.dse]"
+          },
+          "vmSize": {
+            "value": "[parameters('configNodeVmSize')]"
+          },
+          "staticIp": {
+            "value": "[variables('networkSettings').statics.shard5Ip]"
+          },
+          "zabbixServerIPAddress": {
+            "value": "[parameters('zabbixServerIPAddress')]"
+          },
+          "osSettings": {
+            "value": "[variables('shardOsSettings')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "shard6",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard6')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('shardServerTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "namespace": {
+            "value": "[variables('namespace')]"
+          },
+          "vmbasename": {
+            "value": "[concat('shard', '6')]"
+          },
+          "subnet": {
+            "value": "[variables('networkSettings').subnet.dse]"
+          },
+          "vmSize": {
+            "value": "[parameters('configNodeVmSize')]"
+          },
+          "staticIp": {
+            "value": "[variables('networkSettings').statics.shard6Ip]"
+          },
+          "zabbixServerIPAddress": {
+            "value": "[parameters('zabbixServerIPAddress')]"
+          },
+          "osSettings": {
+            "value": "[variables('shardOsSettings')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "shard7",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard7')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('shardServerTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "namespace": {
+            "value": "[variables('namespace')]"
+          },
+          "vmbasename": {
+            "value": "[concat('shard', '7')]"
+          },
+          "subnet": {
+            "value": "[variables('networkSettings').subnet.dse]"
+          },
+          "vmSize": {
+            "value": "[parameters('configNodeVmSize')]"
+          },
+          "staticIp": {
+            "value": "[variables('networkSettings').statics.shard7Ip]"
+          },
+          "zabbixServerIPAddress": {
+            "value": "[parameters('zabbixServerIPAddress')]"
+          },
+          "osSettings": {
+            "value": "[variables('shardOsSettings')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "shard8",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'shard8')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('shardServerTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "namespace": {
+            "value": "[variables('namespace')]"
+          },
+          "vmbasename": {
+            "value": "[concat('shard', '8')]"
+          },
+          "subnet": {
+            "value": "[variables('networkSettings').subnet.dse]"
+          },
+          "vmSize": {
+            "value": "[parameters('configNodeVmSize')]"
+          },
+          "staticIp": {
+            "value": "[variables('networkSettings').statics.shard8Ip]"
+          },
+          "zabbixServerIPAddress": {
+            "value": "[parameters('zabbixServerIPAddress')]"
+          },
+          "osSettings": {
+            "value": "[variables('shardOsSettings')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "routerNode",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'routerNode')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('routerTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "namespace": {
+            "value": "[variables('namespace')]"
+          },
+          "vmbasename": {
+            "value": "router"
+          },
+          "subnet": {
+            "value": "[variables('networkSettings').subnet.dse]"
+          },
+          "vmSize": {
+            "value": "[parameters('routerNodeVmSize')]"
+          },
+          "dnsname": {
+            "value": "[parameters('dnsNamePrefix')]"
+          },
+          "staticIp": {
+            "value": "[variables('networkSettings').statics.routerIp]"
+          },
+          "zabbixServerIPAddress": {
+            "value": "[parameters('zabbixServerIPAddress')]"
+          },
+          "osSettings": {
+            "value": "[variables('routerOsSettings')]"
           }
         }
       }
