@@ -2,6 +2,7 @@
 
 mongoAdminUser=$1
 mongoAdminPasswd=$2
+
 mongoKeyFile='E6JhxBwAXSwhNaz2'
 
 install_mongo3() {
@@ -226,7 +227,14 @@ install_mongo3
         echo "mongod config replica set started failed!"
     fi
 
-#create users
+#create mongo shardsvr user
+mongo --port 27018 <<EOF
+use admin
+db.createUser({user:"$mongoAdminUser",pwd:"$mongoAdminPasswd",roles:[{role: "userAdminAnyDatabase", db: "admin" },{role: "readWriteAnyDatabase", db: "admin" },{role: "root", db: "admin" }]})
+exit
+EOF
+
+#create mongo configsvr user
 mongo --port 27019 <<EOF
 use admin
 db.createUser({user:"$mongoAdminUser",pwd:"$mongoAdminPasswd",roles:[{role: "userAdminAnyDatabase", db: "admin" },{role: "readWriteAnyDatabase", db: "admin" },{role: "root", db: "admin" }]})
@@ -236,7 +244,7 @@ EOF
 mongo --port 27019 <<EOF
 use admin
 db.auth("$mongoAdminUser","$mongoAdminPasswd")
-config={_id: "crepset", configsvr: true, members: [{ _id: 0, host: "10.0.0.240:27019" },{ _id: 1, host: "10.0.0.241:27019" },{ _id: 2, host: "10.0.0.242:27019" }]}
+config={_id: "confReplica", configsvr: true, members: [{ _id: 0, host: "10.0.0.240:27019" },{ _id: 1, host: "10.0.0.241:27019" },{ _id: 2, host: "10.0.0.242:27019" }]}
 rs.initiate(config)
 exit
 EOF

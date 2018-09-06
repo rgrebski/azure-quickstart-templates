@@ -224,4 +224,13 @@ install_mongo3
         echo "mongod config replica set started failed!"
     fi
 
+#create mongo shardsvr user
+mongo --port 27018 <<EOF
+use admin
+db.createUser({user:"$mongoAdminUser",pwd:"$mongoAdminPasswd",roles:[{role: "userAdminAnyDatabase", db: "admin" },{role: "readWriteAnyDatabase", db: "admin" },{role: "root", db: "admin" }]})
+exit
+EOF
+
+#mongo configsvr user is created in primary node (configsvr is a replicaset so no need to set it up on each node)
+
 
