@@ -123,6 +123,7 @@ install_mongo3
     systemctl start mongod.shardsvr.service
 
 
+    sleep 15
     n=`ps -ef |grep "/usr/bin/mongod --config /etc/mongod_shardsvr.conf" |grep -v grep |wc -l`
     if [[ $n -eq 1 ]];then
         echo "mongod shard started successfully"
