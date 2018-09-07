@@ -307,6 +307,12 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
+          },
           "namespace": {
             "value": "[variables('namespace')]"
           },
@@ -351,6 +357,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "mongoAdminUsername": {
+            "value": "[parameters('mongoAdminUsername')]"
+          },
+          "mongoAdminPassword": {
+            "value": "[parameters('mongoAdminPassword')]"
           },
           "namespace": {
             "value": "[variables('namespace')]"
