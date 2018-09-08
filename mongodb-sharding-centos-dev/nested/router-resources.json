@@ -213,7 +213,7 @@
           "fileUris": "[parameters('osSettings').scripts]"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('bash router.sh ', parameters('mongoAdminUsername'), ' ', parameters('mongoAdminPassword'), ' ',  parameters('zabbixServerIPAddress'))]"
+          "commandToExecute": "[concat('bash router.sh ', parameters('mongoAdminUsername'), parameters('mongoAdminPassword'), parameters('zabbixServerIPAddress'))]"
         }
       }
     }
