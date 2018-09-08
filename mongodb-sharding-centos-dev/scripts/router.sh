@@ -25,7 +25,7 @@ Documentation=https://docs.mongodb.org/manual
 [Service]
 User=mongodb
 Group=mongodb
-ExecStart=/usr/bin/mongos --configdb confReplica/10.0.0.240:27019,10.0.0.241:27019,10.0.0.242:27019 --port 27017 --logpath /var/log/mongodb/mongos.log --fork --keyFile /etc/mongokeyfile
+ExecStart=/usr/bin/mongos --configdb confReplica/10.0.0.240:27019,10.0.0.241:27019,10.0.0.242:27019 --port 27017 --logpath /var/log/mongodb/mongos.log --keyFile /etc/mongokeyfile
 PIDFile=/var/run/mongodb/mongod.router.pid
 # file size
 LimitFSIZE=infinity
