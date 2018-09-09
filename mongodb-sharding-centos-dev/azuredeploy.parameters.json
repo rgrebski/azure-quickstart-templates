@@ -3,19 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "adminUsername": {
-      "value": "azureuser"
+      "value": "rgrebski"
     },
     "adminPassword": {
-      "value": "GEN-PASSWORD"
+      "value": "1qazXSW21qazXSW2"
     },
     "mongoAdminUsername": {
-      "value": "mongoadmin"
+      "value": "rgrebski"
     },
     "mongoAdminPassword": {
-      "value": "GEN-PASSWORD"
+      "value": "1qazXSW21qazXSW2"
     },
     "dnsNamePrefix": {
-      "value": "GEN-UNIQUE"
+      "value": "mongo-template-shard"
     },
     "environment": {
       "value": "AzureCloud"
@@ -24,19 +24,19 @@
       "value": "4"
     },
     "sizeOfDataDiskInGB": {
-      "value": 20
+      "value": 30
     },
-    "centOsVersion": {
-        "value": "7.0"
+    "ubuntuOSVersion": {
+        "value": "16.04.0-LTS"
     },
     "routerNodeVmSize": {
-      "value": "Standard_DS3_v2"
+      "value": "Standard_DS1_v2"
     },
     "configNodeVmSize": {
-      "value": "Standard_DS3_v2"
+      "value": "Standard_DS1_v2"
     },
     "shardNodeVmSize": {
-      "value": "Standard_DS3_v2"
+      "value": "Standard_DS1_v2"
     },
     "zabbixServerIPAddress": {
 	  "value": "Null"

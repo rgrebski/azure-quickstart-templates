@@ -90,6 +90,12 @@ install_mongo3
         echo "mongod config replica set started failed!"
     fi
 
+mongo --port 27017 <<EOF
+use admin
+db.createUser({user:"$mongoAdminUser",pwd:"$mongoAdminPasswd",roles:[{role: "userAdminAnyDatabase", db: "admin" },{role: "readWriteAnyDatabase", db: "admin" },{role: "root", db: "admin" }]})
+exit
+EOF
+
 #add shard
 mongo --port 27017 <<EOF
 use admin
