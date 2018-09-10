@@ -193,7 +193,7 @@
           "fileUris": "[parameters('osSettings').scripts]"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('bash config_secondary.sh ', parameters('mongoAdminUsername'), ' ', parameters('mongoAdminPassword'), ' ', parameters('zabbixServerIPAddress'))]"
+          "commandToExecute": "[concat('bash config_secondary.sh ', parameters('mongoAdminUsername'), parameters('mongoAdminPassword'), parameters('zabbixServerIPAddress'))]"
         }
       }
     }
